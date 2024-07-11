@@ -44,7 +44,7 @@ const AddTodo = ({ navigation, route }: { navigation: any; route: any }) => {
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
             <Icon name="close-outline" size={30} color={"white"} />
-          </Pressable>
+          </Pressable>  
           <Pressable onPress={addToList}>
             <Text style={styles.addButtonText}>
               {index !== undefined ? "Update" : "Add"}
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "white",
     backgroundColor: "#5c4628",
-    fontSize: 20,
+    fontSize: 15,
     paddingHorizontal: 20,
     paddingVertical: 5,
     borderRadius: 50,

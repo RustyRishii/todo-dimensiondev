@@ -10,13 +10,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import Animated from "react-native-reanimated";
 import Icon from "react-native-vector-icons/Ionicons";
+import Animated, { Easing } from "react-native-reanimated";
 import {
   useSharedValue,
   withTiming,
   useAnimatedStyle,
-  useAnimatedScrollHandler,
+  withSpring,
 } from "react-native-reanimated";
 import { Colors } from "../utilities/colors";
 
@@ -26,46 +26,65 @@ const Home = ({ navigation }: { navigation: any }) => {
   const lastTap = useRef<Date | null>(null);
 
   const translateX = useSharedValue(200);
-  const itemtranslateX = useSharedValue(-1000);
-  const dustbinTranlateX = useSharedValue(200);
-  //const bgTranslateX = useSharedValue(1000);
+  const itemTranslateX = useSharedValue(-1000);
+  const dustbinTranslateX = useSharedValue(200);
 
   useEffect(() => {
-    translateX.value = withTiming(0, { duration: 1000 });
-    itemtranslateX.value = withTiming(0, { duration: 1000 });
-    dustbinTranlateX.value = withTiming(0, { duration: 1000 });
-    //bgTranslateX.value = withTiming(0, { duration: 1000 });
-  });
+    translateX.value = withTiming(0, {
+      duration: 600,
+      easing: Easing.inOut(Easing.ease),
+    });
+    itemTranslateX.value = withTiming(0, {
+      duration: 600,
+      easing: Easing.inOut(Easing.ease),
+    });
+    dustbinTranslateX.value = withTiming(0, {
+      duration: 600,
+      easing: Easing.inOut(Easing.ease),
+    });
+  }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
 
   const listAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: itemtranslateX.value }],
+    transform: [{ translateX: itemTranslateX.value }],
   }));
 
   const dustbinAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: dustbinTranlateX.value }],
+    transform: [{ translateX: dustbinTranslateX.value }],
   }));
 
   function onRefresh() {
     translateX.value = 200;
-    itemtranslateX.value = -500;
-    dustbinTranlateX.value = 1000;
+    itemTranslateX.value = -500;
+    dustbinTranslateX.value = 1000;
     setTimeout(() => {
-      translateX.value = withTiming(0, { duration: 800 });
-      itemtranslateX.value = withTiming(0, { duration: 800 });
-      dustbinTranlateX.value = withTiming(0, { duration: 800 });
+      translateX.value = withSpring(0, {
+        damping: 15,
+        stiffness: 90,
+      });
+      itemTranslateX.value = withSpring(0, {
+        damping: 15,
+        stiffness: 90,
+      });
+      dustbinTranslateX.value = withSpring(0, {
+        damping: 15,
+        stiffness: 90,
+      });
     }, 200);
   }
 
   const deleteTodo = (index: number) => {
     setTimeout(() => {
       setTodoList((prevTodoList) => prevTodoList.filter((_, i) => i !== index));
-      itemtranslateX.value = withTiming(200, { duration: 1000 });
+      itemTranslateX.value = withTiming(200, {
+        duration: 600,
+        easing: Easing.inOut(Easing.ease),
+      });
       ToastAndroid.show("Deleted", ToastAndroid.SHORT);
-    }, 1000);
+    }, 600);
   };
 
   const renderItem = ({ item, index }: { item: string; index: number }) => {
@@ -109,16 +128,30 @@ const Home = ({ navigation }: { navigation: any }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor={Colors.statusbar} />
-      <Animated.FlatList
-        style={[styles.list]}
-        data={todoList}
-        renderItem={renderItem}
-        removeClippedSubviews={false}
-        keyExtractor={(item, index) => index.toString()}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      {todoList.length === 0 ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontSize: 18, color: Colors.iconColor }}>
+            Please add using the floating action button.
+          </Text>
+        </View>
+      ) : (
+        <Animated.FlatList
+          style={[styles.list]}
+          data={todoList}
+          renderItem={renderItem}
+          removeClippedSubviews={false}
+          keyExtractor={(item, index) => index.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
 
       <Animated.View style={[styles.fabContainer, animatedStyle]}>
         <Pressable
