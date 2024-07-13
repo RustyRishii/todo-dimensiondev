@@ -12,7 +12,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AddTodo = ({ navigation, route }: { navigation: any; route: any }) => {
-  //const [add, setAdd] = useState<string>("");
 
   const [add, setAdd] = useState<string>(route.params?.todo || "");
   const index = route.params?.index;
@@ -44,7 +43,7 @@ const AddTodo = ({ navigation, route }: { navigation: any; route: any }) => {
         <View style={styles.header}>
           <Pressable onPress={() => navigation.goBack()}>
             <Icon name="close-outline" size={30} color={"white"} />
-          </Pressable>  
+          </Pressable>
           <Pressable onPress={addToList}>
             <Text style={styles.addButtonText}>
               {index !== undefined ? "Update" : "Add"}
@@ -105,3 +104,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
 });
+function setTodoList(todos: any) {
+  throw new Error("Function not implemented.");
+}

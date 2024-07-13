@@ -24,7 +24,6 @@ const Home = ({ navigation }: { navigation: any }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [todoList, setTodoList] = useState<string[]>([]);
   const lastTap = useRef<Date | null>(null);
-
   const translateX = useSharedValue(200);
   const itemTranslateX = useSharedValue(-1000);
   const dustbinTranslateX = useSharedValue(200);
@@ -76,10 +75,11 @@ const Home = ({ navigation }: { navigation: any }) => {
     }, 200);
   }
 
-  const deleteTodo = (index: number) => {
+
+  const deleteTodoLocal = (index: number) => {
     setTimeout(() => {
       setTodoList((prevTodoList) => prevTodoList.filter((_, i) => i !== index));
-      itemTranslateX.value = withTiming(200, {
+      itemTranslateX.value = withTiming(0, {
         duration: 600,
         easing: Easing.inOut(Easing.ease),
       });
@@ -88,7 +88,7 @@ const Home = ({ navigation }: { navigation: any }) => {
   };
 
   const renderItem = ({ item, index }: { item: string; index: number }) => {
-    const handleDoubleTap = () => {
+    const updateNote = () => {
       const now = Date.now();
       if (lastTap.current && now - lastTap.current.getTime() < 300) {
         navigation.navigate("AddTodo", {
@@ -103,7 +103,7 @@ const Home = ({ navigation }: { navigation: any }) => {
 
     return (
       <Animated.View style={[styles.item, listAnimatedStyle]}>
-        <Pressable onPress={handleDoubleTap}>
+        <Pressable onPress={updateNote}>
           <Text
             style={{
               color: Colors.iconColor,
@@ -117,7 +117,7 @@ const Home = ({ navigation }: { navigation: any }) => {
           </Text>
         </Pressable>
         <Animated.View style={[dustbinAnimatedStyle]}>
-          <Pressable onPress={() => deleteTodo(index)}>
+          <Pressable onPress={() => deleteTodoLocal(index)}>
             <Icon name="trash-bin" color={"red"} size={32} />
           </Pressable>
         </Animated.View>
