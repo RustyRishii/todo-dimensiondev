@@ -11,7 +11,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/Ionicons";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, {
+  BounceOut,
+  BounceIn,
+  Easing,
+  BounceInLeft,
+  BounceOutRight,
+} from "react-native-reanimated";
 import {
   useSharedValue,
   withTiming,
@@ -19,6 +25,8 @@ import {
   withSpring,
 } from "react-native-reanimated";
 import { Colors } from "../utilities/colors";
+import { Swipeable } from "react-native-gesture-handler";
+//import { BounceIn, BounceOut } from "react-native-reanimated";
 
 const Home = ({ navigation }: { navigation: any }) => {
   const [refreshing, setRefreshing] = useState(false);
@@ -43,7 +51,7 @@ const Home = ({ navigation }: { navigation: any }) => {
     });
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  const FABAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
 
@@ -75,7 +83,6 @@ const Home = ({ navigation }: { navigation: any }) => {
     }, 200);
   }
 
-
   const deleteTodoLocal = (index: number) => {
     setTimeout(() => {
       setTodoList((prevTodoList) => prevTodoList.filter((_, i) => i !== index));
@@ -100,26 +107,32 @@ const Home = ({ navigation }: { navigation: any }) => {
         lastTap.current = new Date();
       }
     };
-
+    //
     return (
-      <Animated.View style={[styles.item, listAnimatedStyle]}>
-        <Pressable onPress={updateNote}>
-          <Text
-            style={{
-              color: Colors.iconColor,
-              fontSize: 20,
-              flexWrap: "wrap",
-              width: 325,
-            }}
-            selectable
-          >
-            {item}
-          </Text>
-        </Pressable>
-        <Animated.View style={[dustbinAnimatedStyle]}>
-          <Pressable onPress={() => deleteTodoLocal(index)}>
-            <Icon name="trash-bin" color={"red"} size={32} />
+      <Animated.View style={listAnimatedStyle}>
+        <Animated.View
+          entering={BounceInLeft}
+          exiting={BounceOutRight}
+          style={styles.item}
+        >
+          <Pressable onPress={updateNote}>
+            <Text
+              style={{
+                color: Colors.iconColor,
+                fontSize: 20,
+                flexWrap: "wrap",
+                width: 325,
+              }}
+              selectable
+            >
+              {item}
+            </Text>
           </Pressable>
+          <Animated.View style={[dustbinAnimatedStyle]}>
+            <Pressable onPress={() => deleteTodoLocal(index)}>
+              <Icon name="trash-bin" color={"red"} size={32} />
+            </Pressable>
+          </Animated.View>
         </Animated.View>
       </Animated.View>
     );
@@ -127,7 +140,7 @@ const Home = ({ navigation }: { navigation: any }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={Colors.statusbar} />
+      <StatusBar style="inverted" backgroundColor={Colors.statusbar} />
       {todoList.length === 0 ? (
         <View
           style={{
@@ -153,7 +166,7 @@ const Home = ({ navigation }: { navigation: any }) => {
         />
       )}
 
-      <Animated.View style={[styles.fabContainer, animatedStyle]}>
+      <Animated.View style={[styles.fabContainer, FABAnimatedStyle]}>
         <Pressable
           onPress={() =>
             navigation.navigate("AddTodo", { addTodo: setTodoList })

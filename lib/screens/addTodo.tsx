@@ -10,9 +10,9 @@ import React, { useState } from "react";
 import { Colors } from "../utilities/colors";
 import Icon from "react-native-vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Swipeable } from "react-native-gesture-handler";
 
 const AddTodo = ({ navigation, route }: { navigation: any; route: any }) => {
-
   const [add, setAdd] = useState<string>(route.params?.todo || "");
   const index = route.params?.index;
 
@@ -63,6 +63,19 @@ const AddTodo = ({ navigation, route }: { navigation: any; route: any }) => {
           scrollEnabled={true}
           multiline={true}
         />
+        <Swipeable>
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: "grey",
+              borderRadius: 10,
+              borderWidth: 1,
+              padding: 5,
+            }}
+          >
+            <Text style={{ fontSize: 25 }}>Swipe text</Text>
+          </View>
+        </Swipeable>
       </View>
     </SafeAreaView>
   );
@@ -95,7 +108,6 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "aliceblue",
-    //height: 50,
     borderRadius: 10,
     fontSize: 20,
     marginVertical: 10,
